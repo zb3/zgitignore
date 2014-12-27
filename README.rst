@@ -74,6 +74,6 @@ zgitignore supports format similar to ``.gitignore`` file format. Differences ar
   Will match ``aaa1256oobbii888``
   ::
 
-    aaa{#[0-9a-f]{3,6\\}}888
+    aaa{#[0-9a-f]{3,6\}}888
 
   Will match ``aaa#00ffff888``
