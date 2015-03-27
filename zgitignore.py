@@ -16,6 +16,9 @@ import re
 def normalize_path(path, sep=os.path.sep):
     path = path.replace(sep, '/')
 
+    while path.startswith('/'):
+        path = path[1:]
+
     while path.startswith('./'):
         path = path[2:]
 

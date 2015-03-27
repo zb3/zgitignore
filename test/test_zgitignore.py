@@ -8,6 +8,7 @@ class ZgitIgnoreTest(unittest.TestCase):
     self.assertEqual(zgitignore.normalize_path('./ert/dr/td/t'), 'ert/dr/td/t')
     self.assertEqual(zgitignore.normalize_path('ert/dr/td/t'), 'ert/dr/td/t')
     self.assertEqual(zgitignore.normalize_path('.\\alb\\dld', sep='\\'), 'alb/dld')
+    self.assertEqual(zgitignore.normalize_path('/foo/fighters', sep='/'), 'foo/fighters')
 
 
   def test_convert_negate(self):
