@@ -78,6 +78,7 @@ def convert_pattern(pat):
         if void:
             regex += re.escape(pat[ptr])
             void = False
+            ptr += 1
 
         elif pat[ptr] == '\\':
             ptr += 1

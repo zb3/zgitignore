@@ -33,6 +33,18 @@ class ZgitIgnoreTest(unittest.TestCase):
     self.assertEqual('\\ \\ \\ \\ \\ \\ ' in pat, False)
     self.assertEqual('\\ \\ \\ \\ \\ ' in pat, True)
 
+  def test_convert_escapes(self):
+    pat, dir, negate = zgitignore.convert_pattern('\\!important')
+    self.assertEqual(pat, '^(?:.+/)?\\!important$')
+
+    pat, dir, negate = zgitignore.convert_pattern('\\#test#')
+    self.assertEqual(pat, '^(?:.+/)?\\#test\\#$')
+
+    pat, dir, negate = zgitignore.convert_pattern('g\\zzzzz\\gzzzzz')
+    self.assertEqual(pat, '^(?:.+/)?gzzzzzgzzzzz$')
+
+    pat, dir, negate = zgitignore.convert_pattern('a\\{[0-9]{3,6\\}}|')
+    self.assertEqual(pat, '^(?:.+/)?a\\{[0-9]3,6}\\|$')
 
   def test_convert_slash(self):
     pat, dir, negate = zgitignore.convert_pattern('lolo/rosso')
@@ -185,6 +197,11 @@ class ZgitIgnoreTest(unittest.TestCase):
 
     test3 = zgitignore.ZgitIgnore(['exclude', '!exclude', 'exclude'])
     self.assertEqual(test3.is_ignored('exclude'), True)
+
+    test4 = zgitignore.ZgitIgnore(['\\#test#', '\\!important'])
+    self.assertEqual(test4.is_ignored('#test#'), True)
+    self.assertEqual(test4.is_ignored('!important'), True)
+
 
   def test_class_case(self):
     test1 = zgitignore.ZgitIgnore(['*readme*'])
