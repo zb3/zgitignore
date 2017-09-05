@@ -219,7 +219,12 @@ class ZgitIgnoreTest(unittest.TestCase):
     self.assertEqual(test1.is_ignored('testcolor#4.test'), False)
     self.assertEqual(test1.is_ignored('testcolor#04zzzz.test'), False)
 
+  def test_docker(self):
+    pat, dir, negate = zgitignore.convert_pattern('test', docker=True)
+    self.assertEqual(pat, '^test$')
 
+    pat, dir, negate = zgitignore.convert_pattern('!test', docker=True)
+    self.assertEqual(pat, '^test$')
 
 
 if __name__ == '__main__':
