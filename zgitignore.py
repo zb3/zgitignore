@@ -182,8 +182,14 @@ class ZgitIgnore():
             if pattern:
                 self.patterns.append(pattern)
 
-    def is_ignored(self, what, is_directory=False):
+    def is_ignored(self, what, is_directory=False, check_parents=False):
         what = normalize_path(what)
+
+        parent = os.path.dirname(what)
+        if check_parents and parent != '':
+            result = self.is_ignored(parent, is_directory=True, check_parents=True)
+            if result:
+                return True
 
         ignored = False
 

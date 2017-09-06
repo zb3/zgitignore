@@ -226,6 +226,11 @@ class ZgitIgnoreTest(unittest.TestCase):
     pat, dir, negate = zgitignore.convert_pattern('!test', docker=True)
     self.assertEqual(pat, '^test$')
 
+  def test_check_parents(self):
+    test1 = zgitignore.ZgitIgnore(['build/'])
+    self.assertEqual(test1.is_ignored('build/test', is_directory=False, check_parents=True), True)
+    self.assertEqual(test1.is_ignored('build/test', is_directory=True, check_parents=True), True)
+
 
 if __name__ == '__main__':
     unittest.main()
