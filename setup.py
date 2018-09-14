@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='zgitignore',
-    version='0.8.0',
+    version='0.8.1',
     description='Check if a file is ignored by a .zgitignore file, compatible with .gitignore syntax',
     long_description=open('./README.rst').read(),
     url='https://github.com/zb3/zgitignore',
