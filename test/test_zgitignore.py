@@ -35,7 +35,7 @@ class ZgitIgnoreTest(unittest.TestCase):
 
   def test_convert_escapes(self):
     pat, dir, negate = zgitignore.convert_pattern('\\!important')
-    self.assertEqual(pat, '^(?:.+/)?\\!important$')
+    self.assertEqual(pat, '^(?:.+/)?'+re.escape('!important')+'$')
 
     pat, dir, negate = zgitignore.convert_pattern('\\#test#')
     self.assertEqual(pat, '^(?:.+/)?\\#test\\#$')
