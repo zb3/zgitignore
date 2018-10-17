@@ -59,6 +59,7 @@ Usage
     #But by default, parent directories aren't checked recursively
     #To check them, use check_parents=True
     f = zgitignore.ZgitIgnore(['build/'])
+    
     print('build/test ignored?', f.is_ignored('build/test')) #False
     print('build/test ignored when check_parents=True?', f.is_ignored('build/test', check_parents=True)) #True
 
