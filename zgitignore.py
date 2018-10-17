@@ -199,3 +199,6 @@ class ZgitIgnore():
                 ignored = not negated
 
         return ignored
+
+    def __len__(self):
+        return len(self.patterns)
