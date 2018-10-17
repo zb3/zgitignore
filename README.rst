@@ -1,6 +1,6 @@
 zgitignore
 ==========
-zgitignore is a small library to check if a file has been excluded by a ``.zgitignore`` file (those are compatible with ``.gitignore`` files).
+zgitignore is a small library to check if a file has been excluded by a ``.zgitignore`` file (those are compatible with ``.gitignore`` / ``.dockerignore`` files).
 
 
 Installation
@@ -24,8 +24,9 @@ Usage
 
     import zgitignore
 
-    #ZgitIgnore class stores the patterns, optionally takes ignore_case parameter
+    #ZgitIgnore class stores the patterns, optionally takes two parameters: ignore_case and docker
     #by default, it is case sensitive to match .gitignore behaviour
+    #for .dockerignore compatibility, use docker=True
     f = zgitignore.ZgitIgnore(['build/', 'dist/', '*egg-info'])
 
     #Patterns ending with / will match folders only:
@@ -43,7 +44,7 @@ Usage
     print('PYCACHE file ignored?', f.is_ignored('PYCACHE')) #True
 
     #You can also add patterns later
-    ignorefile = zgitignore.ZgitIgnore(ignore_case=True)
+    ignorefile = zgitignore.ZgitIgnore(ignore_case=True, docker=True) #this is compatible with .dockerignore files
   
     try:
         with open('.gitignore', 'r') as f:
@@ -51,9 +52,15 @@ Usage
     except:
         pass
 
-    #You can start path with ./ or not.
+    #You can start paths with ./ or not.
     #Paths are normalized to match Unix style paths
     print('./a/b/c/d/e ignored?', ignorefile.is_ignored('./a/b/c/d/e'))
+
+    #But by default, parent directories aren't checked recursively
+    #To check them, use check_parents=True
+    f = zgitignore.ZgitIgnore(['build/'])
+    print('build/test ignored?', f.is_ignored('build/test')) #False
+    print('build/test ignored when check_parents=True?', f.is_ignored('build/test', check_parents=True)) #True
 
 Format
 ------
