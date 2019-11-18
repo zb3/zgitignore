@@ -28,7 +28,7 @@ def normalize_path(path, sep=os.path.sep):
     return path
 
 
-def convert_pattern(pat, docker=False):
+def convert_pattern(pat, docker=False, ignore_case=False):
     if not pat or pat[0] == '#' or pat == '/':
         return None
 
@@ -162,7 +162,7 @@ def convert_pattern(pat, docker=False):
 
     regex += '$'
 
-    return regex, dironly, negate
+    return regex, dironly, negate, re.compile(regex, re.DOTALL | (re.IGNORECASE if ignore_case else 0))
 
 
 class ZgitIgnore():
@@ -178,7 +178,7 @@ class ZgitIgnore():
 
     def add_patterns(self, lines):
         for line in lines:
-            pattern = convert_pattern(line, self.docker)
+            pattern = convert_pattern(line, self.docker, self.ignore_case)
             if pattern:
                 self.patterns.append(pattern)
 
@@ -193,9 +193,9 @@ class ZgitIgnore():
 
         ignored = False
 
-        for pattern, directory_only, negated in self.patterns:
+        for pattern, directory_only, negated, compiled_pattern in self.patterns:
             if (not directory_only or is_directory) and re.match(
-                    pattern, what, re.DOTALL | (re.IGNORECASE if self.ignore_case else 0)):
+                    compiled_pattern, what):
                 ignored = not negated
 
         return ignored
