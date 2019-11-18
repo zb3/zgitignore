@@ -24,27 +24,27 @@ Usage
 
     import zgitignore
 
-    #ZgitIgnore class stores the patterns, optionally takes two parameters: ignore_case and docker
-    #by default, it is case sensitive to match .gitignore behaviour
-    #for .dockerignore compatibility, use docker=True
+    # ZgitIgnore class stores the patterns, optionally takes two parameters: ignore_case and docker
+    # by default, it is case sensitive to match .gitignore behaviour
+    # for .dockerignore compatibility, use docker=True
     f = zgitignore.ZgitIgnore(['build/', 'dist/', '*egg-info'])
 
-    #Patterns ending with / will match folders only:
-    print('build file ignored?: ', f.is_ignored('build')) #False
+    # Patterns ending with / will match folders only:
+    print('build file ignored?: ', f.is_ignored('build')) # False
 
-    #When matching directories, set second parameter to True:
-    print('build folder ignored?: ', f.is_ignored('build', True)) #True
+    # When matching directories, set second parameter to True:
+    print('build folder ignored?: ', f.is_ignored('build', True)) # True
 
-    #It is case sensitive by default:
-    print('BUILD folder ignored?: ', f.is_ignored('BUILD', True)) #False
+    # It is case sensitive by default:
+    print('BUILD folder ignored?: ', f.is_ignored('BUILD', True)) # False
 
-    #Want it to be case-insensitive? No problem
-    f = zgitignore.ZgitIgnore(['*pycache*', '*pyc'], True) #second parameter is ignore_case
+    # Want it to be case-insensitive? No problem
+    f = zgitignore.ZgitIgnore(['*pycache*', '*pyc'], True) # second parameter is ignore_case
     
-    print('PYCACHE file ignored?', f.is_ignored('PYCACHE')) #True
+    print('PYCACHE file ignored?', f.is_ignored('PYCACHE')) # True
 
-    #You can also add patterns later
-    ignorefile = zgitignore.ZgitIgnore(ignore_case=True, docker=True) #this is compatible with .dockerignore files
+    # You can also add patterns later
+    ignorefile = zgitignore.ZgitIgnore(ignore_case=True, docker=True) # this is compatible with .dockerignore files
   
     try:
         with open('.gitignore', 'r') as f:
@@ -52,16 +52,16 @@ Usage
     except:
         pass
 
-    #You can start paths with ./ or not.
-    #Paths are normalized to match Unix style paths
+    # You can start paths with ./ or not.
+    # Paths are normalized to match Unix style paths
     print('./a/b/c/d/e ignored?', ignorefile.is_ignored('./a/b/c/d/e'))
 
-    #But by default, parent directories aren't checked recursively
-    #To check them, use check_parents=True
+    # But by default, parent directories aren't checked recursively
+    # To check them, use check_parents=True
     f = zgitignore.ZgitIgnore(['build/'])
     
-    print('build/test ignored?', f.is_ignored('build/test')) #False
-    print('build/test ignored when check_parents=True?', f.is_ignored('build/test', check_parents=True)) #True
+    print('build/test ignored?', f.is_ignored('build/test')) # False
+    print('build/test ignored when check_parents=True?', f.is_ignored('build/test', check_parents=True)) # True
 
 Format
 ------
