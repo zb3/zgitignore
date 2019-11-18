@@ -12,175 +12,175 @@ class ZgitIgnoreTest(unittest.TestCase):
 
 
   def test_convert_negate(self):
-    pat, dir, negate = zgitignore.convert_pattern('!a')
+    pat, dir, negate, comp = zgitignore.convert_pattern('!a')
     self.assertEqual(negate, True)
 
-    pat, dir, negate = zgitignore.convert_pattern('a')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a')
     self.assertEqual(negate, False)
 
-    pat, dir, negate = zgitignore.convert_pattern('\\!a')
+    pat, dir, negate, comp = zgitignore.convert_pattern('\\!a')
     self.assertEqual(negate, False)
 
 
   def test_convert_spaces(self):
-    pat, dir, negate = zgitignore.convert_pattern('aaaaaa      ')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaaaaa      ')
     self.assertEqual('\\ \\ \\ \\ \\ \\ ' in pat, False)
     
-    pat, dir, negate = zgitignore.convert_pattern('aaaaaa     \\ ')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaaaaa     \\ ')
     self.assertEqual('\\ \\ \\ \\ \\ \\ ' in pat, True)
 
-    pat, dir, negate = zgitignore.convert_pattern('aaaaaa     \\\\ ')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaaaaa     \\\\ ')
     self.assertEqual('\\ \\ \\ \\ \\ \\ ' in pat, False)
     self.assertEqual('\\ \\ \\ \\ \\ ' in pat, True)
 
   def test_convert_escapes(self):
-    pat, dir, negate = zgitignore.convert_pattern('\\!important')
+    pat, dir, negate, comp = zgitignore.convert_pattern('\\!important')
     self.assertEqual(pat, '^(?:.+/)?'+re.escape('!important')+'$')
 
-    pat, dir, negate = zgitignore.convert_pattern('\\#test#')
+    pat, dir, negate, comp = zgitignore.convert_pattern('\\#test#')
     self.assertEqual(pat, '^(?:.+/)?\\#test\\#$')
 
-    pat, dir, negate = zgitignore.convert_pattern('g\\zzzzz\\gzzzzz')
+    pat, dir, negate, comp = zgitignore.convert_pattern('g\\zzzzz\\gzzzzz')
     self.assertEqual(pat, '^(?:.+/)?gzzzzzgzzzzz$')
 
-    pat, dir, negate = zgitignore.convert_pattern('a\\{[0-9]{3,6\\}}|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a\\{[0-9]{3,6\\}}|')
     self.assertEqual(pat, '^(?:.+/)?a\\{[0-9]3,6}\\|$')
 
   def test_convert_slash(self):
-    pat, dir, negate = zgitignore.convert_pattern('lolo/rosso')
+    pat, dir, negate, comp = zgitignore.convert_pattern('lolo/rosso')
     self.assertEqual(pat.startswith('^(?:'), False)
 
-    pat, dir, negate = zgitignore.convert_pattern('lolo/')
+    pat, dir, negate, comp = zgitignore.convert_pattern('lolo/')
     self.assertEqual(pat.startswith('^(?:'), True)
 
-    pat, dir, negate = zgitignore.convert_pattern('lolo/rosso/**')
+    pat, dir, negate, comp = zgitignore.convert_pattern('lolo/rosso/**')
     self.assertEqual(pat.startswith('^(?:'), False)
 
-    pat, dir, negate = zgitignore.convert_pattern('/rosso')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/rosso')
     self.assertEqual(pat.startswith('^(?:'), False)
 
 
   def test_convert(self):
-    pat, dir, negate = zgitignore.convert_pattern('lolo/')
+    pat, dir, negate, comp = zgitignore.convert_pattern('lolo/')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('lolo/rosso')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('lolo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('wolo/lolo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('lolo/')))
 
-    pat, dir, negate = zgitignore.convert_pattern('*lolo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*lolo')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('lolo/')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('ugabuga/folor/lolo')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('w/r/lolos')))
 
-    pat, dir, negate = zgitignore.convert_pattern('po*lolo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('po*lolo')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('pololo')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('po/wa/wo/lolo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('ugabuga/polorewrlolo')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('pololo5')))
 
-    pat, dir, negate = zgitignore.convert_pattern('po\\*lolo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('po\\*lolo')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('pololo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('po*lolo')))
 
-    pat, dir, negate = zgitignore.convert_pattern('hopsasa/dolasa')
+    pat, dir, negate, comp = zgitignore.convert_pattern('hopsasa/dolasa')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('hopsasa/dolasaf')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('ooo/hopsasa/dolasa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('/hopsasa')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/hopsasa')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('booga/hopsasa')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('hopsasa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('*/hopsasa/dolasa')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*/hopsasa/dolasa')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('ooo/hopsasa/dolasa')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('ooo/woo/hopsasa/dolasa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('**/hopsasa/dolasa')
+    pat, dir, negate, comp = zgitignore.convert_pattern('**/hopsasa/dolasa')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('ooo/hopsasa/dolasa')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('ooo/woo/hopsasa/dolasa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('aaa/**/bee')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaa/**/bee')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa/bee')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa/x/bee')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa/b/d/d/bee')))
 
-    pat, dir, negate = zgitignore.convert_pattern('aaa/**')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaa/**')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('aaa')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa/b/d/d/bee')))
 
-    pat, dir, negate = zgitignore.convert_pattern('aaa**')
+    pat, dir, negate, comp = zgitignore.convert_pattern('aaa**')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('aaa/b/d/d/bee')))
 
 
   def test_convert_from_gitignore(self): #stolen from gitignore manual
-    pat, dir, negate = zgitignore.convert_pattern('Documentation/*.html')
+    pat, dir, negate, comp = zgitignore.convert_pattern('Documentation/*.html')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('Documentation/git.html')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('Documentation/ppc/ppc.html')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('tools/perf/Documentation/perf.html')))
 
-    pat, dir, negate = zgitignore.convert_pattern('/*.c')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/*.c')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('cat-file.c')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('mozilla-sha1/sha1.c')))
 
-    pat, dir, negate = zgitignore.convert_pattern('**/foo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('**/foo')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('s/ds/ds/foo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('foo/foo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('foo')))
 
-    pat, dir, negate = zgitignore.convert_pattern('/**/foo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/**/foo')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('s/ds/ds/foo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('foo/foo')))
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('foo')))
 
-    pat, dir, negate = zgitignore.convert_pattern('**/foo/bar')
+    pat, dir, negate, comp = zgitignore.convert_pattern('**/foo/bar')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('window/ogaboga/foo/bar')))
 
-    pat, dir, negate = zgitignore.convert_pattern('/bar/**')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/bar/**')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('bar/df/dfd/f')))
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('bar')))
 
 
   def test_convert_from_comments(self):
-    pat, dir, negate = zgitignore.convert_pattern('*aaa')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*aaa')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('e/r/cf/x/s/bbbaaa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('*aaa/')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*aaa/')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('e/r/cf/x/s/bbbaaa')))
 
-    pat, dir, negate = zgitignore.convert_pattern('*aaa/cf')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*aaa/cf')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('asasas/baaa/cf')))
 
-    pat, dir, negate = zgitignore.convert_pattern('*/lol.mw')
+    pat, dir, negate, comp = zgitignore.convert_pattern('*/lol.mw')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('lol.mw')))
 
-    pat, dir, negate = zgitignore.convert_pattern('a*n/wat')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a*n/wat')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('an/wat')))
 
-    pat, dir, negate = zgitignore.convert_pattern('a*n')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a*n')
     self.assertIsNotNone(re.search(pat, zgitignore.normalize_path('an')))
 
-    pat, dir, negate = zgitignore.convert_pattern('/*/foo')
+    pat, dir, negate, comp = zgitignore.convert_pattern('/*/foo')
     self.assertIsNone(re.search(pat, zgitignore.normalize_path('foo')))
 
   def test_convert_brackets(self):
-    pat, dir, negate = zgitignore.convert_pattern('a[]]|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a[]]|')
     self.assertEqual(pat, '^(?:.+/)?a[]]\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a[d]|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a[d]|')
     self.assertEqual(pat, '^(?:.+/)?a[d]\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a[!a]|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a[!a]|')
     self.assertEqual(pat, '^(?:.+/)?a[^a]\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a[a-z]|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a[a-z]|')
     self.assertEqual(pat, '^(?:.+/)?a[a-z]\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a[!o-q]|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a[!o-q]|')
     self.assertEqual(pat, '^(?:.+/)?a[^o-q]\\|$')
 
 
   def test_convert_power_regex(self):
-    pat, dir, negate = zgitignore.convert_pattern('a{[0-9]{3,6\\}}|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a{[0-9]{3,6\\}}|')
     self.assertEqual(pat, '^(?:.+/)?a[0-9]{3,6}\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a{\\\\n}|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a{\\\\n}|')
     self.assertEqual(pat, '^(?:.+/)?a\\n\\|$')
-    pat, dir, negate = zgitignore.convert_pattern('a{(oga|boga)}|')
+    pat, dir, negate, comp = zgitignore.convert_pattern('a{(oga|boga)}|')
     self.assertEqual(pat, '^(?:.+/)?a(oga|boga)\\|$')
 
 
@@ -220,10 +220,10 @@ class ZgitIgnoreTest(unittest.TestCase):
     self.assertEqual(test1.is_ignored('testcolor#04zzzz.test'), False)
 
   def test_docker(self):
-    pat, dir, negate = zgitignore.convert_pattern('test', docker=True)
+    pat, dir, negate, comp = zgitignore.convert_pattern('test', docker=True)
     self.assertEqual(pat, '^test$')
 
-    pat, dir, negate = zgitignore.convert_pattern('!test', docker=True)
+    pat, dir, negate, comp = zgitignore.convert_pattern('!test', docker=True)
     self.assertEqual(pat, '^test$')
 
   def test_check_parents(self):
